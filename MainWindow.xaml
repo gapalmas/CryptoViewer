@@ -1,0 +1,22 @@
+<Window x:Class="CryptoViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:CryptoViewer.ViewModels"
+        Title="Crypto Viewer" Height="300" Width="600">
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+
+    <Grid Background="#FF1E1E1E">
+        <DataGrid ItemsSource="{Binding Currencies}" AutoGenerateColumns="False" 
+                  Foreground="White" Background="#FF1E1E1E" HeadersVisibility="Column"
+                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Criptomoneda" Binding="{Binding Name}" Width="*"/>
+                <DataGridTextColumn Header="Precio USD" Binding="{Binding PriceUsd, StringFormat=C}" Width="*"/>
+                <DataGridTextColumn Header="Precio MXN" Binding="{Binding PriceMxn, StringFormat=C}" Width="*"/>
+                <DataGridTextColumn Header="Cambio 24h (%)" Binding="{Binding Change24h, StringFormat=N2}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

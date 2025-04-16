@@ -1,0 +1,9 @@
+{
+  "settings": {
+    "documentationRules": {
+      "companyName": "gapalmas",
+      "documentExposedElements": true,
+      "documentInternalElements": true
+    }
+  }
+}

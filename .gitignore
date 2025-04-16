@@ -1,0 +1,54 @@
+﻿## Ignore Visual Studio temporary files, build results, and
+## user-specific files
+
+# Build Folders
+bin/
+obj/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# VS Code settings
+.vscode/
+
+# Dotnet artifacts
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# NuGet
+*.nupkg
+*.snupkg
+*.nuspec
+.nuget/
+packages/
+*.psmdcp
+*.symbols.nupkg
+
+# StyleCop cache
+StyleCop.Cache
+
+# Others
+*.log
+*.tmp
+
+# Publish output
+publish/
+*.dbmdl
+
+# Mac OS / Linux / Windows system files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+.vs/CryptoViewer/DesignTimeBuild/.dtbcache.v2
+*.vsidx
+.vs/CryptoViewer/v17/.futdcache.v2
+*.bin
