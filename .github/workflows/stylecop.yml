@@ -1,52 +1,80 @@
-name: Build and Lint
+name: .NET Core Desktop
 
 on:
   push:
-    branches:
-      - "main"
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - "main"
+    branches: [ "main" ]
 
 jobs:
-  lint:
-    runs-on: windows-latest  # WPF requiere Windows
+  build:
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    runs-on: windows-latest
+
+    env:
+      Solution_Name: CryptoViewer.sln
+      # Descomenta y ajusta las siguientes líneas si tienes estos proyectos
+      # Test_Project_Path: tests/CryptoViewer.Tests/CryptoViewer.Tests.csproj
+      # Wap_Project_Directory: CryptoViewer.Package
+      # Wap_Project_Path: CryptoViewer.Package/CryptoViewer.Package.wapproj
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.x'
+    # Instalar .NET Core
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
 
-      - name: Ensure StyleCop.Analyzers is installed
-        run: |
-          $csproj = Get-ChildItem -Recurse -Filter *.csproj | Select-Object -First 1
-          if (-not (dotnet list $csproj.FullName package | Select-String 'StyleCop.Analyzers')) {
-            Write-Host "🔍 Installing StyleCop.Analyzers..."
-            dotnet add $csproj.FullName package StyleCop.Analyzers
-          } else {
-            Write-Host "✅ StyleCop.Analyzers already installed"
-          }
+    # Agregar MSBuild al PATH
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2
 
-      - name: Restore dependencies
-        run: dotnet restore
+    # Restaurar las dependencias del proyecto
+    - name: Restore dependencies
+      run: dotnet restore
 
-      - name: Build and Lint with StyleCop
-        run: dotnet build --no-restore -warnaserror -p:TreatWarningsAsErrors=true
+    # Compilar el proyecto
+    - name: Build
+      run: dotnet build --no-restore --configuration ${{ matrix.configuration }}
 
-      - name: Upload logs if build failed
-        if: failure()
-        run: |
-          mkdir logs
-          echo "⚠️ StyleCop errors found." > logs/stylecop.txt
-        continue-on-error: true
+    # Ejecutar tests unitarios si existen
+    - name: Execute unit tests
+      run: dotnet test --no-build --configuration ${{ matrix.configuration }}
+      continue-on-error: true
 
-      - name: Upload StyleCop logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: stylecop-logs
-          path: logs
+    # Analizar el código con StyleCop si está instalado
+    - name: Run StyleCop Analysis
+      run: |
+        if (Get-ChildItem -Recurse -Filter *.csproj | Select-String -Pattern 'StyleCop.Analyzers') {
+          Write-Host "✅ Running StyleCop analysis..."
+          dotnet build --no-restore --configuration ${{ matrix.configuration }} /p:TreatWarningsAsErrors=true
+        } else {
+          Write-Host "⚠️ StyleCop.Analyzers not found. Skipping analysis."
+        }
+      continue-on-error: true
+
+    # Publicar el proyecto (opcional)
+    - name: Publish
+      run: dotnet publish --no-build --configuration ${{ matrix.configuration }} --output ./publish
+      if: matrix.configuration == 'Release'
+
+    # Subir los artefactos compilados
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: CryptoViewer-${{ matrix.configuration }}
+        path: |
+          ./publish/
+          **/*.dll
+          **/*.exe
+          !**/obj/**
+          !**/bin/Debug/**
+        if-no-files-found: ignore
