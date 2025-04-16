@@ -1,6 +1,6 @@
 # 💸 CryptoViewer
 
-Aplicación de escritorio WPF desarrollada en .NET 8 para mostrar en tiempo real el valor de Bitcoin, Ethereum y Stellar utilizando la API de CoinGecko
+Aplicación de escritorio WPF desarrollada en .NET 8 para mostrar en tiempo real el valor de Bitcoin, Ethereum y Stellar utilizando la API de CoinGecko.
 
 ---
 
