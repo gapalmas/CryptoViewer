@@ -10,7 +10,7 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest  # WPF requiere Windows
 
     steps:
       - name: Checkout code
@@ -21,8 +21,32 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+      - name: Ensure StyleCop.Analyzers is installed
+        run: |
+          $csproj = Get-ChildItem -Recurse -Filter *.csproj | Select-Object -First 1
+          if (-not (dotnet list $csproj.FullName package | Select-String 'StyleCop.Analyzers')) {
+            Write-Host "🔍 Installing StyleCop.Analyzers..."
+            dotnet add $csproj.FullName package StyleCop.Analyzers
+          } else {
+            Write-Host "✅ StyleCop.Analyzers already installed"
+          }
+
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Lint with StyleCop (no UI build)
-        run: dotnet build --no-restore -warnaserror -p:UseWpf=false
+      - name: Build and Lint with StyleCop
+        run: dotnet build --no-restore -warnaserror -p:TreatWarningsAsErrors=true
+
+      - name: Upload logs if build failed
+        if: failure()
+        run: |
+          mkdir logs
+          echo "⚠️ StyleCop errors found." > logs/stylecop.txt
+        continue-on-error: true
+
+      - name: Upload StyleCop logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stylecop-logs
+          path: logs
