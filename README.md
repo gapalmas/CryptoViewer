@@ -20,22 +20,25 @@ Aplicación de escritorio WPF desarrollada en .NET 8 para mostrar en tiempo real
 ## 🧱 Estructura del Proyecto
 
 ```
+
 CryptoViewer/
-├── CryptoViewer.csproj
-├── App.xaml
-├── MainWindow.xaml
-├── Models/
-│   └── CryptoCurrency.cs
-├── ViewModels/
-│   └── MainViewModel.cs
-├── Services/
-│   └── CryptoService.cs
-├── Resources/
-│   └── Brushes.xaml
-├── stylecop.json
-└── .github/
-    └── workflows/
-        └── dotnet-stylecop.yml
+├── .github/
+│   └── workflows/
+│       ├── stylecop.yml
+│       └── codeql-analysis.yml
+├── CryptoViewer/
+│       ├── Models/
+│       ├── ViewModels/
+│       ├── Views/
+│       ├── Services/
+│       ├── App.xaml
+│       ├── App.xaml.cs
+│       ├── MainWindow.xaml
+│       ├── MainWindow.xaml.cs
+│       └── CryptoViewer.csproj
+├── .gitignore
+├── README.md
+└── CryptoViewer.sln
 ```
 
 ---
